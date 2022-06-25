@@ -53,7 +53,7 @@ sudo chmod +x /usr/local/bin/docker-compose
   cd fabric-samples/test-network$ 
   ```  
   
-  ilk komutumuz içinde bir dizi komut ve uygulama emri bulunan ./network.sh  bash script dosyasını ayağa kaldırmak olacaktır. Bu dosyanın içinde bir networkun ayağa kalkması için gereken tüm düzenlemeler mevcuttur. 
+  ilk komutumuz içinde bir dizi komut ve uygulama emri bulunan  ` ./network.sh ` bash script dosyasını ayağa kaldırmak olacaktır. Bu dosyanın içinde bir networkun ayağa kalkması için gereken tüm düzenlemeler mevcuttur. 
   
   ```
   ./network.sh up
@@ -64,9 +64,42 @@ sudo chmod +x /usr/local/bin/docker-compose
   ```
   docker ps -a
   ``` 
-komutu işlenebilir. Artık belirli üyelerin kendi aralarında işlem yapacağı bir kanal oluşturma safhasına geçilir. İstenirse bir zincirde birden çok kanak oluşturulabilir.  Bir kanal, katılımcı üyeler, eşler, defter, akıllı sözleşmeler ve sipariş verenler tarafından oluşur. Hyperledger Fabric kurulumunda gelen ikili dosyalar `configtxgen` komutu kullanılmaktadır.Configtxgen komutu, kullanıcıların kanal yapılandırmasıyla ilgili ayarları oluşturmasına ve incelemesine olanak tanır. Hyperledger Fabric ağlarında her kanal konfigürasyonu bir genesis blokunun oluşturulması ile başlar.Kanal konfigürasyonları ve kanal politikaları oluşturulmuştur.Önce kanalın oluşturacak komut yazılır
-  
-  
-  
-  
-  
+komutu işlenebilir. Artık belirli üyelerin kendi aralarında işlem yapacağı bir kanal oluşturma safhasına geçilir. İstenirse bir zincirde birden çok kanak oluşturulabilir.  Bir kanal, katılımcı üyeler, eşler, defter, akıllı sözleşmeler ve sipariş verenler tarafından oluşur. Hyperledger Fabric kurulumunda gelen ikili dosyalar `configtxgen` komutu kullanılmaktadır.Bu komut, kullanıcıların kanal yapılandırmasıyla ilgili Kanal konfigürasyonları ve kanal politikaları oluşturulmasını sağlar. Hyperledger Fabric ağlarında her kanal konfigürasyonu bir genesis blokunun oluşturulması ile başlar. İlgili komut aşağıda verilmştir.  
+
+```
+./network.sh createChannel
+```
+
+Şimdi kanalda bulunan eşlere chaincode yani akıllı sözleşme atanacaktır. Eşler, ağın temel unsurlarıdır çünkü akıllı sözleşmeleri ve defterleri barındırırlar. ağa chaincode yüklemesini yapmak için bir geri klasördeki akıllı kontrat ve onun bağımlılıkları çağrılır.
+
+```
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
+```
+
+
+Bir eş, akıllı sözleşmeler ve defterlere erişim için bağlantı noktası olduğu için uygulamalar bu noktalara erişmek istiyorlarsa, bir eşle etkileşime girmelidirler. Organizasyonlara  kriptofik bir dijital kimliğe sahip olmasını  “Sertifika Otoritesi” sağlar. Ağda etkileşimde bulunmak isteyen her aktörün bir kimliğe ihtiyacı vardır.
+
+```
+export PATH=${PWD}/../bin:$PATH
+export FABRIC_CFG_PATH=$PWD/../config/
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org1MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ADDRESS=localhost:7051
+
+```
+Ağ içerisindeki bir organizasyonun geçerli kimliklerini yöneten ve kurallarını tanımlayan bileşen “Üyelik Servis Sağlayıcısı (MSP) ”dır. Org1 için kriptografik kimlik oluştu. Aynı şeyi ikinci bir organizasyon içinde oluşturabiliriz. 
+
+```
+export PATH=${PWD}/../bin:$PATH
+export FABRIC_CFG_PATH=$PWD/../config/
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org2MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ADDRESS=localhost:9051
+
+```
+Şu ana ağımızda iki organizasyon ve bir adet orderer mevcuttur. Bu iki organizasyon kanal içinde transaction gerçekleşririp kayıt oluşturabilecektir. Orderer (siparişciler) ise bu işlemleri kontrol edip  blok yaratırlar ve  akabinde  eşlere dağıtarak yayımlarlar.
+
