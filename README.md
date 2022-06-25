@@ -103,3 +103,31 @@ export CORE_PEER_ADDRESS=localhost:9051
 ```
 Şu ana ağımızda iki organizasyon ve bir adet orderer mevcuttur. Bu iki organizasyon kanal içinde transaction gerçekleşririp kayıt oluşturabilecektir. Orderer (siparişciler) ise bu işlemleri kontrol edip  blok yaratırlar ve  akabinde  eşlere dağıtarak yayımlarlar.
 
+transactionlara geçmeden önce chaincod daki varsayılan  değerleri (asset) aşağıdaki resimden görebilirsiniz.
+
+![jhgg](https://user-images.githubusercontent.com/59863925/175786062-6c73565b-be04-46dd-8085-6a31ea4bb243.png)
+
+Bu assetleri kanala yüklemek için organizasyonlardan biri aşağıdaki komutu girerek kayıt(invoke) oluşturur. 
+
+```
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"InitLedger","Args":[]}'
+```
+yüklenen bu bilgileri sorgulamak için query komutu kullanılır. 
+
+```
+peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
+
+```
+Görüldüğü gibi invoke yeni bir değer girişini, query ise sorgulama işlemini sağlamaktadır. 
+
+Chaincode daki fonksiyonlara göre bir çok transaction ve sorgulama işlemleri geliştirilebilinir. Mesala 6. assetin sahibinin ismini değiştiren bir çağrı oluşturabiliriz. Michel bu varlığını MemetSeref isimli bir vatandaşa devretmiş olsun. Bunun için gönderilecek çağrı şu şekilde oluşturulur. 
+
+```
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"TransferAsset","Args":["asset6","Acun"]}'
+```
+Hemen bu durumu sorgulayacak kot oluşturulur. 
+
+```
+peer chaincode query -C mychannel -n basic -c '{"Args":["ReadAsset","asset6"]}'
+```
+
