@@ -64,7 +64,7 @@ sudo chmod +x /usr/local/bin/docker-compose
   ```
   docker ps -a
   ``` 
-komutu işlenebilir. Artık belirli üyelerin kendi aralarında işlem yapacağı bir kanal oluşturma safhasına geçilir. İstenirse bir zincirde birden çok kanak oluşturulabilir.  Bir kanal, katılımcı üyeler, eşler, defter, akıllı sözleşmeler ve sipariş verenler tarafından oluşur. Hyperledger Fabric kurulumunda gelen ikili dosyalar `configtxgen` komutu kullanılmaktadır.Bu komut, kullanıcıların kanal yapılandırmasıyla ilgili Kanal konfigürasyonları ve kanal politikaları oluşturulmasını sağlar. Hyperledger Fabric ağlarında her kanal konfigürasyonu bir genesis blokunun oluşturulması ile başlar. İlgili komut aşağıda verilmştir.  
+komutu işlenebilir. Artık belirli üyelerin kendi aralarında işlem yapacağı bir kanal oluşturma safhasına geçilir. İstenirse bir zincirde birden çok kanal oluşturulabilir.  Bir kanal, katılımcı üyeler, eşler, defter, akıllı sözleşmeler ve sipariş verenler tarafından oluşur. Hyperledger Fabric kurulumunda gelen ikili dosyalardn biri olan  `configtxgen` komutu  kullanıcıların kanal yapılandırmasıyla ilgili kanal konfigürasyonları ve kanal politikaları oluşturmasını sağlar. Hyperledger Fabric ağlarında her kanal konfigürasyonu bir genesis blokunun oluşturulması ile başlar. İlgili komut aşağıda verilmiştir.  
 
 ```
 ./network.sh createChannel
@@ -103,7 +103,7 @@ export CORE_PEER_ADDRESS=localhost:9051
 ```
 Şu ana ağımızda iki organizasyon ve bir adet orderer mevcuttur. Bu iki organizasyon kanal içinde transaction gerçekleşririp kayıt oluşturabilecektir. Orderer (siparişciler) ise bu işlemleri kontrol edip  blok yaratırlar ve  akabinde  eşlere dağıtarak yayımlarlar.
 
-transactionlara geçmeden önce chaincod daki varsayılan  değerleri (asset) aşağıdaki resimden görebilirsiniz.
+Transactionlara geçmeden önce chaincode daki varsayılan  değerleri (asset) aşağıdaki resimden görebilirsiniz.
 
 ![jhgg](https://user-images.githubusercontent.com/59863925/175786062-6c73565b-be04-46dd-8085-6a31ea4bb243.png)
 
@@ -130,4 +130,19 @@ Hemen bu durumu sorgulayacak kot oluşturulur.
 ```
 peer chaincode query -C mychannel -n basic -c '{"Args":["ReadAsset","asset6"]}'
 ```
+Bu seferde yeni bir varlık çağrısı yapalım. 
 
+```
+peer chaincode invoke \  -o localhost:7050 \ --ordererTLSHostnameOverride orderer.example.com \  --tls \  --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \  -C mychannel \  -n basic \  --peerAddresses localhost:7051 \  --tlsRootCertFiles  ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \  --peerAddresses localhost:9051  \  --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt \   -c '{"function":"CreateAsset","Args":["asset7","purple","21","Emek","900"]}'
+
+```
+Transactionun işlenip işlenmemesi durumunu sorgulamak için, 
+
+```
+peer chaincode query -C mychannel -n basic -c '{"Args":["ReadAsset","asset7"]}'
+```
+Örnekler çoğaltılabilir. Akıllı kontrat incelendiğinde fonksiyon temelli olarak işlemler çeşitlenebilir. Son olarak networku durdurmak için aşağıdaki kot girilir.
+
+```
+./network.sh down
+```
