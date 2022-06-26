@@ -1,11 +1,11 @@
-# HyperLedgerTestNetworkTurkish
- in this repository,  Hyperledger Test Network  will be practised as Turkish 
+# HyperLedgerFabricTestNetworkTurkish
+ in this repository,  Hyperledger Fabric Test Network  will be practised as Turkish 
  
  ![dd](https://user-images.githubusercontent.com/59863925/175784069-307fd2d6-6668-4be7-bb82-bb63128a5e0d.png)
 
  
 
-Bu uygulamada, Ubuntu üzerinden  bir localhost sunucusunda Hyperledger Test Network'unu çalıştıracağız.
+Bu uygulamada, Ubuntu üzerinden  bir localhost sunucusunda Hyperledger Fabric Test Network'unu çalıştıracağız.
 Test Network uygulamasına geçmeden önce temel gereksinimlerin yüklenmesi gerekmektedir. 
 
 ## Ön yüklemeler
