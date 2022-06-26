@@ -50,7 +50,7 @@ sudo chmod +x /usr/local/bin/docker-compose
   Buradan testnetwork klasörüne giriş yapılır. 
   
   ```
-  cd fabric-samples/test-network$ 
+  cd fabric-samples/test-network 
   ```  
   
   ilk komutumuz içinde bir dizi komut ve uygulama emri bulunan  ` ./network.sh ` bash script dosyasını ayağa kaldırmak olacaktır. Bu dosyanın içinde bir networkun ayağa kalkması için gereken tüm düzenlemeler mevcuttur. 
